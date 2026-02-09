@@ -1,13 +1,16 @@
 const {test, expect,request} = require('@playwright/test');
 const loginPayLoad = {userEmail: "anshika@gmail.com", userPassword: "Iamking@000"};
 let Token;
+let OrderIDToken;
+const orderPayload = {orders:[{country:"India",productOrderedId:"696886c0c941646b7a9a3b53"}]};
 test.beforeAll(" Calling login with API",async ()=>
 {
 
     const apiContext = await request.newContext();
     const loginRespone = await apiContext.post("https://rahulshettyacademy.com/api/ecom/auth/login",
         {
-            data:loginPayLoad
+            data:loginPayLoad,
+            
         }
         
     )
@@ -17,6 +20,22 @@ test.beforeAll(" Calling login with API",async ()=>
     const loginResponseJson = await loginRespone.json();
     Token = loginResponseJson.token;
     console.log(Token);
+
+    const orderResponse =  await apiContext.post("https://rahulshettyacademy.com/api/ecom/order/create-order",
+        {
+            data:orderPayload,
+            headers:{
+                'Authorization' : Token,
+                // 'Content-Type' : application/json 
+            },
+        }
+    )
+
+     const orderResponseJson = await orderResponse.json();
+    console.log(orderResponseJson);
+
+    OrderIDToken = orderResponseJson.orders[0];
+    console.log("Order ID"+OrderIDToken);
 
 });
 
