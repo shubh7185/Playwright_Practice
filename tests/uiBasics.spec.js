@@ -1,4 +1,5 @@
 const {test, expect} = require('@playwright/test');
+const { request } = require('http');
 const { promiseHooks } = require('v8');
 
 // test('First Playwright test', async function(){
@@ -6,12 +7,15 @@ const { promiseHooks } = require('v8');
 
 // });
 // using anyonmus function
-test('Browser context Playwright test', async ({browser}) => { 
+test.only('Browser context Playwright test', async ({browser}) => { 
    
     // await will get activated only when we mark function async only id didn't mark then there is no use 
     // browser.newContext it will help you to open fresh browser like incognito to remove the pre used cookies 
     const context =  await browser.newContext();
     const page = await context.newPage();
+    page.route('**/*.css',
+        route=> route.abort()
+    );
 
 
     const userName = page.locator('#username');
@@ -19,7 +23,8 @@ test('Browser context Playwright test', async ({browser}) => {
     const signButton = page.locator("#signInBtn");
 
     const cardTitles = page.locator(".card-body a");
-
+    page.on('request',request=>console.log(request.url()));
+    page.on('response',response=>console.log(response.url(),response.status()));
 
     await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
         console.log(await page.title());
@@ -60,7 +65,7 @@ test('Browser context Playwright test', async ({browser}) => {
     
 // });
 
-test.only('UI controls', async ({page}) => { 
+test('UI controls', async ({page}) => { 
 
     await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
     const userName = page.locator('#username');
