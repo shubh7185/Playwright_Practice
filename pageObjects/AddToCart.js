@@ -7,6 +7,8 @@ class AddToCart{
         this.products = page.locator(".card-body");
         this.productsText = page.locator(".card-body b");
         this.cartPage = page.locator("[routerlink='/dashboard/cart']");
+        this.order = page.locator("li [routerlink*='/dashboard/myorders']");
+
         
 
     }
@@ -37,6 +39,11 @@ class AddToCart{
     async NavigateCartPage()
     {
         await this.cartPage.click();
+    }
+
+    async NaivgateOrderPage()
+    {
+        await this.order.click();
     }
 
     // async WaitForPageLoad()

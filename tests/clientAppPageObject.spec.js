@@ -1,9 +1,11 @@
 const {test, expect} = require('@playwright/test');
+
 // const {loginPage} = require('../pageObjects/loginPage');
 // const {AddToCart} = require('../pageObjects/AddToCart');
 // const { Checkout } = require('../pageObjects/Checkout');
 // const { OrderDetailPage } = require('../pageObjects/OrderDetailPage');
 const {POManager} = require('../pageObjects/POManager');
+const { AddToCart } = require('../pageObjects/AddToCart');
 
 
 test.only('Browser context Playwright test', async ({page}) => { 
@@ -38,29 +40,17 @@ test.only('Browser context Playwright test', async ({page}) => {
     console.log(orderId);
 
 
-    await page.locator("li [routerlink*='/dashboard/myorders']").click();
-    await page.locator("tbody").waitFor();
+    await addToCart.NaivgateOrderPage();
 
-    const TotalRows =  page.locator("tbody tr");
-    const countTotalRows =  await TotalRows.count();
+    const orderhistory = poManager.getOrderHistory();
+    await orderhistory.searchOrderID(orderId);
 
-    console.log(countTotalRows);
+    const orderpagedetails = await orderhistory.getOrderId();
 
+    console.log(orderpagedetails);
+    console.log(orderId);
 
-    for(let i=0;i<countTotalRows;i++)
-    {
-        const rowOrderId = await TotalRows.nth(i).locator("th").textContent();
-        console.log(rowOrderId);
-        if(orderId.includes(rowOrderId))
-        {
-            await TotalRows.nth(i).locator("button").first().click();
-            break;
-        }
-    }
-
-    const orderDetails = await page.locator(".col-text.-main").textContent();
-    expect(orderId.includes(orderDetails)).toBeTruthy();
-
-
+    
+    expect(orderId.includes(orderpagedetails)).toBeTruthy();
  
 });

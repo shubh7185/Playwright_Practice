@@ -2,7 +2,7 @@ const {loginPage} = require('./loginPage');
 const {AddToCart} = require('./AddToCart');
 const { Checkout } = require('./Checkout');
 const { OrderDetailPage } = require('./OrderDetailPage');
-
+const { OrderHistory } = require('./OrderHistory');
 
 class POManager{
     constructor(page)
@@ -12,6 +12,7 @@ class POManager{
          this.addToCart = new AddToCart(page);
          this.checkoutPage = new Checkout(page);
          this.orderdetails  = new OrderDetailPage(page);
+         this.orderhistory = new OrderHistory(page);
     }
 
 
@@ -33,6 +34,11 @@ class POManager{
     getOrderPage()
     {
         return this.orderdetails;
+    }
+
+    getOrderHistory()
+    {
+        return this.orderhistory;
     }
 }
 
