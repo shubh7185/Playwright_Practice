@@ -6,21 +6,24 @@ const {test, expect} = require('@playwright/test');
 // const { OrderDetailPage } = require('../pageObjects/OrderDetailPage');
 const {POManager} = require('../pageObjects/POManager');
 const { AddToCart } = require('../pageObjects/AddToCart');
+const dataset = JSON.parse(JSON.stringify(require("../Utills/placeOrderTestData.json")));
 
 
 test.only('Browser context Playwright test', async ({page}) => { 
     const poManager = new POManager(page);
-   const productName = 'ZARA COAT 3';
+   const productName = dataset.productName;
+//    const Email = Data.Email;
+//    const Password = Data.Password;
     const products = page.locator(".card-body");
 
     const loginpage = poManager.getLoginPage();
     await loginpage.goTo();
-    await loginpage.validLogin("anshika@gmail.com","Iamking@000");
+    await loginpage.validLogin(dataset.username,dataset.passwrod);
 
     await loginpage.WaitForLoadPage();
 
     const addToCart = poManager.getCartPage();
-    await addToCart.AddProductInCart(productName);
+    await addToCart.AddProductInCart(dataset.productName);
     await addToCart.NavigateCartPage();
     
 
