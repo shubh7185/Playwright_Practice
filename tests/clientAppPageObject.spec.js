@@ -1,95 +1,112 @@
 const {test, expect} = require('@playwright/test');
-const {loginPage} = require('../pageObjects/loginPage');
+const {Customtest} = require('../Utills/test_base');
+// const {loginPage} = require('../pageObjects/loginPage');
+// const {AddToCart} = require('../pageObjects/AddToCart');
+// const { Checkout } = require('../pageObjects/Checkout');
+// const { OrderDetailPage } = require('../pageObjects/OrderDetailPage');
+const {POManager} = require('../pageObjects/POManager');
+const { AddToCart } = require('../pageObjects/AddToCart');
+const dataset = JSON.parse(JSON.stringify(require("../Utills/placeOrderTestData.json")));
 
-
-test.only('Browser context Playwright test', async ({page}) => { 
-   const productName = 'ZARA COAT 3';
+for(const data of dataset)
+{
+test(`Client Application  ${data.username}`, async ({page}) => { 
+    const poManager = new POManager(page);
+   const productName = data.productName;
+//    const Email = Data.Email;
+//    const Password = Data.Password;
     const products = page.locator(".card-body");
 
-    const loginpage = new loginPage(page);
-    loginpage.goTo();
-    loginpage.validLogin("anshika@gmail.com","Iamking@000");
+    const loginpage = poManager.getLoginPage();
+    await loginpage.goTo();
+    await loginpage.validLogin(data.username,data.passwrod);
 
-    await page.waitForLoadState('networkidle');
-    await page.locator(".card-body b").first().waitFor();
-    const titles = await page.locator(".card-body b").allTextContents();
-    console.log(titles);
-    const count = await products.count();
-    for(let i=0 ;i<count;i++)
-    {
-        if(await products.nth(i).locator('b').textContent()=== productName)
-        {
-            // add to cart
-            await products.nth(i).locator("text = Add To Cart").click();
-        }
+    await loginpage.WaitForLoadPage();
 
+    const addToCart = poManager.getCartPage();
+    await addToCart.AddProductInCart(data.productName);
+    await addToCart.NavigateCartPage();
+    
 
-    }
-
-    await page.locator("[routerlink='/dashboard/cart']").click();
+    // await page.locator("[routerlink='/dashboard/cart']").click();
+    const checkoutPage = poManager.getCheckOutPage();
     await page.locator("div li").first().waitFor();
-    const bool = await page.locator("h3:has-text('ZARA COAT 3')").isVisible();
+    const bool = await checkoutPage.cartProduct.isVisible();
     expect(bool).toBeTruthy();
-    await page.locator(".subtotal button.btn-primary").click();
-    const monthdropdown = page.locator(".input.ddl ").first();
-    await monthdropdown.selectOption("08");
-    const datedropdown = page.locator(".input.ddl ").nth(1);
-    await datedropdown.selectOption("02");
-    await page.locator("input[value='4542 9931 9292 2293']").fill('4111111111111111');
-    await page.locator(".field.small input").first().fill('123');
-    await page.locator(".field input").nth(2).fill("Shubh agrawal");
-    await page.locator(".field input").nth(3).fill("12345678");
-    await page.locator("[placeholder*='Select Country']").pressSequentially("Ind"); // it is use when we want to press keys one by one
-    const dropdown = page.locator(".ta-results");
-    await dropdown.waitFor();
-    const  optionsCount = await dropdown.locator("button").count();
 
-    console.log(optionsCount);
-    for(let i=0;i<optionsCount;i++)
-    {
-        const text =  await dropdown.locator("button").nth(i).textContent() ;
-        if(text === " India")
-            {
-                await dropdown.locator("button").nth(i).click();
-                break;
+    await checkoutPage.ClickToCheckout();
 
-            }    
-    }
+    const orderdetails  = poManager.getOrderPage();
+    await orderdetails.OrderDetails("08","02","4111111111111111","Shubh agrawal","12345678","Ind","India");
+    await orderdetails.VerifyEmailId("anshika@gmail.com");
 
-    expect(page.locator(".user__name [type='text']").first()).toHaveText("anshika@gmail.com");
-
-    await page.locator(".btnn").click();
-
-    await expect(page.locator(".hero-primary")).toHaveText(" Thankyou for the order. ");
-    const countOrders = await page.locator(".em-spacer-1 .ng-star-inserted").count();
-    console.log(countOrders);
-    const orderId = await page.locator(".em-spacer-1 .ng-star-inserted").textContent();
+    const orderId = await orderdetails.SubmitAndGetOrderId();
     console.log(orderId);
 
-    await page.locator("li [routerlink*='/dashboard/myorders']").click();
 
-    await page.locator("tbody").waitFor();
+    await addToCart.NaivgateOrderPage();
 
-    const TotalRows =  page.locator("tbody tr");
-    const countTotalRows =  await TotalRows.count();
+    const orderhistory = poManager.getOrderHistory();
+    await orderhistory.searchOrderID(orderId);
 
-    console.log(countTotalRows);
+    const orderpagedetails = await orderhistory.getOrderId();
 
+    console.log(orderpagedetails);
+    console.log(orderId);
 
-    for(let i=0;i<countTotalRows;i++)
-    {
-        const rowOrderId = await TotalRows.nth(i).locator("th").textContent();
-        console.log(rowOrderId);
-        if(orderId.includes(rowOrderId))
-        {
-            await TotalRows.nth(i).locator("button").first().click();
-            break;
-        }
-    }
-
-    const orderDetails = await page.locator(".col-text.-main").textContent();
-    expect(orderId.includes(orderDetails)).toBeTruthy();
-
-
+    
+    expect(orderId.includes(orderpagedetails)).toBeTruthy();
  
 });
+}
+
+Customtest.only(`Client Application Using Custom Fixture`, async ({page,testDataForOrder}) => { 
+    const poManager = new POManager(page);
+   const productName = testDataForOrder.productName;
+//    const Email = Data.Email;
+//    const Password = Data.Password;
+    const products = page.locator(".card-body");
+
+    const loginpage = poManager.getLoginPage();
+    await loginpage.goTo();
+    await loginpage.validLogin(testDataForOrder.username,testDataForOrder.passwrod);
+
+    await loginpage.WaitForLoadPage();
+
+    const addToCart = poManager.getCartPage();
+    await addToCart.AddProductInCart(testDataForOrder.productName);
+    await addToCart.NavigateCartPage();
+    
+
+    // await page.locator("[routerlink='/dashboard/cart']").click();
+    const checkoutPage = poManager.getCheckOutPage();
+    await page.locator("div li").first().waitFor();
+    const bool = await checkoutPage.cartProduct.isVisible();
+    expect(bool).toBeTruthy();
+
+    await checkoutPage.ClickToCheckout();
+
+    const orderdetails  = poManager.getOrderPage();
+    await orderdetails.OrderDetails("08","02","4111111111111111","Shubh agrawal","12345678","Ind","India");
+    await orderdetails.VerifyEmailId("anshika@gmail.com");
+
+    const orderId = await orderdetails.SubmitAndGetOrderId();
+    console.log(orderId);
+
+
+    await addToCart.NaivgateOrderPage();
+
+    const orderhistory = poManager.getOrderHistory();
+    await orderhistory.searchOrderID(orderId);
+
+    const orderpagedetails = await orderhistory.getOrderId();
+
+    console.log(orderpagedetails);
+    console.log(orderId);
+
+    
+    expect(orderId.includes(orderpagedetails)).toBeTruthy();
+ 
+});
+
+

@@ -20,7 +20,12 @@ class loginPage{
     await this.userEmail.fill(username);
     await this.userPassword.fill(Password);
     await this.signInButton.click();
+    
+    }
 
+    async WaitForLoadPage()
+    {
+        await this.page.waitForLoadState('networkidle');
     }
 }
 
