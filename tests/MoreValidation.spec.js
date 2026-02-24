@@ -1,5 +1,6 @@
 const {test,expect} = require("@playwright/test") 
 
+test.describe.configure({mode:'parallel'});
 test("More validation on hidden elements",async({page})=>
 {
     // methods for navigation
@@ -39,7 +40,7 @@ test("Screnn shot valiadtion", async({page})=>
 
 })
 
-test.only("Visual ", async({page})=>
+test("Visual ", async({page})=>
 {
 
     await page.goto("https://www.google.com/");

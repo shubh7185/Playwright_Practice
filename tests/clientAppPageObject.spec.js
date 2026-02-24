@@ -60,7 +60,7 @@ test(`Client Application  ${data.username}`, async ({page}) => {
 });
 }
 
-Customtest.only(`Client Application Using Custom Fixture`, async ({page,testDataForOrder}) => { 
+Customtest(`Client Application Using Custom Fixture`, async ({page,testDataForOrder}) => { 
     const poManager = new POManager(page);
    const productName = testDataForOrder.productName;
 //    const Email = Data.Email;

@@ -8,6 +8,7 @@ import { defineConfig, devices } from '@playwright/test';
 const config = ({
   testDir: './tests',
   timeout: 40000,
+  retries : 2,
   expect : {
     timeout : 40000,
     // time for assertion validaion
@@ -17,7 +18,7 @@ const config = ({
   use: { 
 
     browserName : 'chromium',
-    headless : false,
+    headless : true,
     trace: 'on',
     screenshot : 'on',
 
