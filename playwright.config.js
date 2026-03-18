@@ -18,7 +18,7 @@ const config = ({
   use: { 
 
     browserName : 'chromium',
-    headless : true,
+    headless : false,
     trace: 'on',
     screenshot : 'on',
 

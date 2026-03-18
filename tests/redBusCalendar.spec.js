@@ -77,22 +77,15 @@ test('Calendar automation', async ({ page }) => {
     let previousCount = 0;
 
     while (true) {
-
         const currentCount = await buses.count();
 
-        if (currentCount === previousCount) {
-            break; // No new buses loaded
-        }
+        if (currentCount === previousCount) break;
 
         previousCount = currentCount;
 
-        console.log("Currently loaded:", currentCount);
+        await page.mouse.wheel(0, 3000);
 
-        // Always scroll to last visible element dynamically
-        await buses.last().scrollIntoViewIfNeeded();
-
-        // Wait for lazy loading
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(1000);
     }
 
     const totalBuses = await buses.count();
@@ -142,7 +135,7 @@ test('Calendar automation', async ({ page }) => {
     }
 
 
-    const NumberOfSeatsSelect = 2;
+    const NumberOfSeatsSelect = 1;
     let selectedCount = 0;
 
     await page.waitForSelector('[role="button"][aria-label*="Seat number"]');
@@ -183,54 +176,54 @@ test('Calendar automation', async ({ page }) => {
 
     // await page.waitForSelector('text=2. Board/Drop point');
 
-// Wait for boarding group to be attached to DOM
-// await page.waitForSelector('[aria-label="Boarding points"]', { state: 'attached' });
+    // Wait for boarding group to be attached to DOM
+    // await page.waitForSelector('[aria-label="Boarding points"]', { state: 'attached' });
 
-// Small stabilization delay (important for React animations)
-await page.waitForTimeout(700);
+    // Small stabilization delay (important for React animations)
+    await page.waitForTimeout(700);
 
-const ParentBoardingPoint = await page.locator(".bpdpList___9e7995 ").first();
-await ParentBoardingPoint.locator(".bpdp").first().click();
+    const ParentBoardingPoint = await page.locator(".bpdpList___9e7995 ").first();
+    await ParentBoardingPoint.locator(".bpdp").first().click();
 
-// const boardingRadio = page
-//   .getByRole('radiogroup', { name: 'Boarding points' })
-//   .getByRole('radio')
-//   .first();
+    // const boardingRadio = page
+    //   .getByRole('radiogroup', { name: 'Boarding points' })
+    //   .getByRole('radio')
+    //   .first();
 
-// if (!(await boardingRadio.isChecked())) {
-//     await boardingRadio.click();
-// }
-// // Click dropping radio
-// const droppingRadio = page
-//     .getByRole('radiogroup', { name: 'Dropping points' })
-//     .getByRole('radio')
-//     .first();
+    // if (!(await boardingRadio.isChecked())) {
+    //     await boardingRadio.click();
+    // }
+    // // Click dropping radio
+    // const droppingRadio = page
+    //     .getByRole('radiogroup', { name: 'Dropping points' })
+    //     .getByRole('radio')
+    //     .first();
 
-// await droppingRadio.waitFor({ state: 'visible' });
-// await droppingRadio.click();
+    // await droppingRadio.waitFor({ state: 'visible' });
+    // await droppingRadio.click();
 
 
 
-// Now click Fill Passenger button
-const passengerButton = page.locator(
-    "button[aria-label*='Fill passenger details']"
-);
+    // Now click Fill Passenger button
+    const passengerButton = page.locator(
+        "button[aria-label*='Fill passenger details']"
+    );
 
-await passengerButton.waitFor({ state: 'visible' });
-await passengerButton.click();
+    await passengerButton.waitFor({ state: 'visible' });
+    await passengerButton.click();
 
-await page.locator("input[placeholder*='Phone']").fill("8279456190");
-await page.locator("input[placeholder*='Enter email id']").fill("Aditi123@gmail.com");
-console.log("*****************",await page.locator('[role="combobox"]').count());
+    await page.locator("input[placeholder*='Phone']").fill("8279456190");
+    await page.locator("input[placeholder*='Enter email id']").fill("Aditi123@gmail.com");
+    console.log("*****************", await page.locator('[role="combobox"]').count());
 
-await page.locator('div:has-text("State of Residence")')
-          .locator('[role="combobox"]')
-          .click();
-          
-          // await page.getByRole('combobox',{name:'State of Residence'}).click();
-await page.locator('div[aria-label*="Select state of residence"]').waitFor();
-await page.locator("input[placeholder='Search for state']").fill("Uttarakhand");
-await page.getByRole('radio', { name: 'Uttarakhand' }).click();
+    await page.locator('div:has-text("State of Residence")')
+        .locator('[role="combobox"]')
+        .click();
+
+    // await page.getByRole('combobox',{name:'State of Residence'}).click();
+    await page.locator('div[aria-label*="Select state of residence"]').waitFor();
+    await page.locator("input[placeholder='Search for state']").fill("Uttarakhand");
+    await page.getByRole('radio', { name: 'Uttarakhand' }).click();
 
 
 
